@@ -4,15 +4,15 @@
 	 * @package content_field
 	 */
 	class SourceCodeContent implements ContentType {
+		public function getName() {
+			return __('Source Code');
+		}
+
 		public function appendSettingsHeaders(HTMLPage $page) {
 
 		}
 
 		public function appendSettingsInterface(XMLElement $wrapper, $field_name, StdClass $settings = null, MessageStack $errors) {
-			$legend = new XMLElement('legend');
-			$legend->setValue(__('Source Code'));
-			$wrapper->appendChild($legend);
-
 			// Default textarea size:
 			$group = new XMLElement('div');
 			$group->setAttribute('class', 'group');
@@ -55,19 +55,6 @@
 
 			$group->appendChild($label);
 			$wrapper->appendChild($group);
-
-			// Enable this content type:
-			$input = Widget::Input("{$field_name}[enabled]", 'yes', 'checkbox');
-
-			if ($settings->{'enabled'} == 'yes') {
-				$input->setAttribute('checked', 'checked');
-			}
-
-			$wrapper->appendChild(Widget::Label(
-				__('%s Enable the Source Code content type', array(
-					$input->generate()
-				))
-			));
 		}
 
 		public function sanitizeSettings($settings) {
@@ -87,7 +74,7 @@
 				$settings->{'text-size'} = 'auto';
 			}
 
-			if (isset($settings->{'text-formatter'}) === false) {
+			if (isset($settings->{'tab-size'}) === false) {
 				$settings->{'tab-size'} = 4;
 			}
 
@@ -105,16 +92,6 @@
 		}
 
 		public function appendPublishInterface(XMLElement $wrapper, $field_name, StdClass $settings, StdClass $data, MessageStack $errors, $entry_id = null) {
-			$header = new XMLElement('header');
-			$header->addClass('main');
-			$header->appendChild(
-				new XMLElement('strong', __('Source Code'))
-			);
-			$wrapper->appendChild($header);
-
-			$content = new XMLElement('div');
-			$wrapper->appendChild($content);
-
 			// Syntax highlighting:
 			$group = new XMLElement('div');
 			$group->setAttribute('class', 'group');
@@ -157,7 +134,7 @@
 			));
 
 			$group->appendChild($label);
-			$content->appendChild($group);
+			$wrapper->appendChild($group);
 
 			// Source code:
 			$text = Widget::Textarea(
@@ -169,7 +146,7 @@
 			);
 			$text->addClass('size-' . $settings->{'text-size'});
 			$text->addClass('tab-size-' . $data->{'tab-size'});
-			$content->appendChild($text);
+			$wrapper->appendChild($text);
 		}
 
 		public function processData(StdClass $settings, StdClass $data, $entry_id = null) {
@@ -203,7 +180,7 @@
 			$default = array(
 				'value'				=> null,
 				'value_formatted'	=> null,
-				'tab-size'			=> null,
+				'tab-size'			=> $settings->{'tab-size'},
 				'syntax'			=> null
 			);
 
