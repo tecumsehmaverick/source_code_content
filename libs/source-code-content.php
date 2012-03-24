@@ -99,7 +99,9 @@
 		}
 
 		public function appendPublishHeaders(HTMLPage $page) {
-			$url = URL . '/extensions/content_field/assets';
+			$url = URL . '/extensions/source_code_content/assets';
+			$page->addStylesheetToHead($url . '/publish.css', 'screen');
+			$page->addScriptToHead($url . '/publish.js');
 		}
 
 		public function appendPublishInterface(XMLElement $wrapper, $field_name, StdClass $settings, StdClass $data, MessageStack $errors, $entry_id = null) {
@@ -149,6 +151,7 @@
 			}
 
 			$label = Widget::Label('Tab Size');
+			$label->addClass('tab-size-toggle');
 			$label->appendChild(Widget::Select(
 				"{$field_name}[data][tab-size]", $values
 			));
@@ -165,6 +168,7 @@
 				)
 			);
 			$text->addClass('size-' . $settings->{'text-size'});
+			$text->addClass('tab-size-' . $data->{'tab-size'});
 			$content->appendChild($text);
 		}
 
